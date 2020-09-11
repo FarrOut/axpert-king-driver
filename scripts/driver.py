@@ -2,11 +2,7 @@ import serial
 import time
 import json
 import logging
-
-# -------------------- Main Body ----------------------------
-
-con = serial.Serial(port=port, baudrate=baudrate, parity=parity, stopbits=stopbits, write_timeout=write_timeout, timeout=read_timeout)
-
+import sys
 
 # ------------------ Parameters ----------------------
 
@@ -23,18 +19,35 @@ cr             = '\r' # Carriage-Return Character
 # ------------------ API Commands ----------------------
 
 def get_general_status():
+    logging.debug('Querying device general status...')
+    _cmd = 'QPIGS'
+    _crc = 'ss'
+    _res, _crc_valid = _send_command(_cmd, _crc)
+
 
 
 # ------------------ Generic Functions ----------------------
 
 def _send_command(_cmd, _crc):
-    logging.DEBUG('Sending', _cmd, 'command to', port, '...')
-    con.write(str(_cmd + _crc + cr))
-    logging.DEBUG(_cmd, 'command sent to port', port, '. Reading response from device...')
+    logging.debug("Sending " + str(_cmd) + " command to port " + str(port))
+    con.write(str(_cmd + _crc + cr).encode(encoding))
+    logging.debug('Command sent')
     time.sleep(tx_delay) # Wait for Tx to complete.
     _res = con.read(size=64) #TODO unhardcode buffer size
-    logging.DEBUG('Received', _res.size,'byte','response from device on port', port, 'for', _cmd,'command')
-    return _res
+    logging.debug('Received response of ' + str(sys.getsizeof(_res)) + 'byte(s)')
+    # _crc_actual = 'Na' #TODO parse from read response
+    # _crc_valid = _crc_check(_crc, _crc_actual)
+    _crc_valid = bool(True) #TODO  debugging
+
+    return _res, _crc_valid
 
 def _crc_check(expected, actual):
-    logging.DEBUG('CRC check...')
+    logging.debug('CRC check...')
+    return bool(true) #TODO override
+
+# -------------------- Main Body ----------------------------
+logging.basicConfig(filename='driver.log',level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+
+con = serial.Serial(port=port, baudrate=baudrate, parity=parity, stopbits=stopbits, write_timeout=write_timeout, timeout=read_timeout)
+
+get_general_status()
