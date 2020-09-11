@@ -26,9 +26,10 @@ def get_general_status():
     _res, _crc_valid = _send_command(_cmd, _crc)
     print('Result received:' + str(_res)) #TODO debugging
 
-    _regex = r"\b(\d*(\.\d+)?)\b"
+    _regex = r"\b(\d{1,3}\.?\d{0,2})\b"
     _match = re.search(_regex, str(_res))
-    print('Match->',_match)
+    _matches = [x.group() for x in re.finditer( _regex, str(_res))]
+    print('Matches->',_matches)
 
 # ------------------ Generic Functions ----------------------
 
