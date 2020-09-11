@@ -26,7 +26,7 @@ def get_general_status():
     _res, _crc_valid = _send_command(_cmd, _crc)
     print('Result received:' + str(_res)) #TODO debugging
 
-    _regex = r"(\d{1,3}\.?\d{0,2})"
+    _regex = r"\b(\d*(\.\d+)?)\b"
     _match = re.search(_regex, str(_res))
     print('Match->',_match)
 
