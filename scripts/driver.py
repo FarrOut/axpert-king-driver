@@ -3,6 +3,7 @@ import time
 import json
 import logging
 import sys
+import re
 
 # ------------------ Parameters ----------------------
 
@@ -23,8 +24,11 @@ def get_general_status():
     _cmd = 'QPIGS'
     _crc = 'ss'
     _res, _crc_valid = _send_command(_cmd, _crc)
+    print('Result received:' + str(_res)) #TODO debugging
 
-
+    _regex = r"(\d{1,3}\.?\d{0,2})"
+    _match = re.search(_regex, str(_res))
+    print('Match->',_match)
 
 # ------------------ Generic Functions ----------------------
 
@@ -39,7 +43,7 @@ def _send_command(_cmd, _crc):
     # _crc_valid = _crc_check(_crc, _crc_actual)
     _crc_valid = bool(True) #TODO  debugging
 
-    return _res, _crc_valid
+    return _res.decode(encoding), _crc_valid
 
 def _crc_check(expected, actual):
     logging.debug('CRC check...')
