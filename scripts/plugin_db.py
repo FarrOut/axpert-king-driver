@@ -4,11 +4,12 @@ import logging
 import array
 import time
 import sys
+from datetime import datetime
 
 # ------------------ Parameters ----------------------
 
 buffer         = []
-buffer_size    = 5
+buffer_size    = 5 # How many datasets to accumulate before publishing
 period         = 1 # Seconds between readings
 
 # -------------------- Functions ---------------------
@@ -21,13 +22,24 @@ def _publish(_batch):
     except:
         return False
 
+def _parse_data(_dataset):
+    _timestamp  = datetime.now()
+    _volt       = _dataset["grid_voltage"]
+
+    _record     = (_timestamp, _volt)
+    return _record
+
 # ----------------- Main Body -------------------------
 logging.info('Starting worker.')
 
 while True:
     try:
-        buffer.append(get_general_status())
-                
+        _data = get_general_status()["data"]
+        _record = _parse_data(_data)
+
+        print(_record)
+        buffer.append(_record)
+
         if len(buffer) >= buffer_size:
             _publish(buffer)
             buffer = []
