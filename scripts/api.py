@@ -3,7 +3,6 @@
 from driver import send_command
 
 import time
-import json
 import logging
 import sys
 import re
@@ -18,7 +17,7 @@ def get_general_status():
     logging.debug('Querying device general status...')
     _cmd = 'QPIGS'
     _crc = 'ss'
-    _res, _crc_valid = _send_command(_cmd, _crc)
+    _res, _crc_valid = send_command(_cmd, _crc)
     print('Result received:' + str(_res)) #TODO debugging
 
     _regex = r"\b(\d{1,3}\.?\d{0,2})\b"
@@ -50,9 +49,7 @@ def get_general_status():
         }
     }
 
-    _json = json.dumps(_dataset)
-
-    return _json
+    return _dataset
 
 # -------------------- Main Body ----------------------------
 logging.basicConfig(filename=log_filename,level=log_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
