@@ -7,10 +7,6 @@ import logging
 import sys
 import re
 
-# ------------------ Parameters ----------------------
-log_level       = logging.DEBUG
-log_filename    = 'api.log'
-
 # ------------------ API Commands ----------------------
 
 def get_general_status():
@@ -18,7 +14,6 @@ def get_general_status():
     _cmd = 'QPIGS'
     _crc = 'ss'
     _res, _crc_valid = send_command(_cmd, _crc)
-    print('Result received:' + str(_res)) #TODO debugging
 
     _regex = r"\b(\d{1,3}\.?\d{0,2})\b"
     _match = re.search(_regex, str(_res))
@@ -52,4 +47,3 @@ def get_general_status():
     return _dataset
 
 # -------------------- Main Body ----------------------------
-logging.basicConfig(filename=log_filename,level=log_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')

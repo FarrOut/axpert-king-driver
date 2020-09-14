@@ -18,7 +18,8 @@ read_timeout   = 1
 encoding       = 'ascii'
 tx_delay       = 0.05 # Time to wait after writing before attempting to read response
 cr             = '\r' # Carriage-Return Character
-
+log_level      = logging.DEBUG
+log_filename   = 'axpert_driver.log'
 
 # ------------------ Functions ----------------------
 def send_command(_cmd, _crc):
@@ -39,7 +40,7 @@ def _crc_check(expected, actual):
     return bool(true) #TODO override
 
 # -------------------- Main Body ----------------------------
-logging.basicConfig(filename='driver.log',level=logging.DEBUG, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
+logging.basicConfig(filename=log_filename,level=log_level, format='%(asctime)s %(levelname)-8s %(message)s', datefmt='%Y-%m-%d %H:%M:%S')
 
 # Define serial connection
 con = serial.Serial(port=port, baudrate=baudrate, parity=parity, stopbits=stopbits, write_timeout=write_timeout, timeout=read_timeout)

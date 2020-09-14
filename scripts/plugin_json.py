@@ -4,9 +4,6 @@ import logging
 import json
 
 # ------------------ Parameters ----------------------
-log_level       = logging.DEBUG
-log_filename    = 'plugin-json.log'
-
 _period = 1000 # Milliseconds between readings
 
 # -------------------- Functions ---------------------
