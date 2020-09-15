@@ -15,6 +15,9 @@ def get_general_status():
     _crc = 'ss'
     _res, _crc_valid = send_command(_cmd, _crc)
 
+    if (!_crc_valid)
+        logging.warning('CRC check failed for ' + _cmd + ' command.')
+
     _regex = r"\b(\d{1,3}\.?\d{0,2})\b"
     _match = re.search(_regex, str(_res))
     _matches = [x.group() for x in re.finditer( _regex, str(_res))]
