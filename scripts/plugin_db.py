@@ -1,6 +1,7 @@
 #!/usr/bin/python
 from api import get_general_status
 import logging
+import traceback
 import array
 import time
 import sys
@@ -20,6 +21,7 @@ db_port           = 3306
 db_user           = 'Skyenet'
 db_pass           = 'OLZEh1PcXQ5tgESh'
 db_name           = 'db_myinverter'
+db_table          = 'inverter'
 # -------------------- Functions ---------------------
 
 def _create_db_connection(_host, _user, _pass, _database):
@@ -34,7 +36,9 @@ def _create_db_connection(_host, _user, _pass, _database):
             user=_user,
             password=_pass
         )
+
         print(db)
+
 
     except:
         logging.exception('Error creating connection to database')
@@ -50,17 +54,30 @@ def _create_db_table(_name):
     _sql = _sql + ')'
     mycursor.execute(_sql)
 
+#
+# This is the momement where Python Object becomes SQL...
+#
+def _addRecord(_timestamp, _volt):
+    _sql = 'INSERT INTO ' + db_table + ' (Timestamp, GridVoltage) VALUES ('+ _timestamp + ',' + _volt + ')'
+
+    _mycursor = db.cursor()
+    _mycursor.execute(_sql)
+
 def _publish(_batch):
     try:
-        print('Publishing:',_batch)
         logging.debug('Publishing to DB')
-        return True
-    except:
-        return False
+        for _r in _batch:
+            _timestamp, _grid_voltage = _r
+            _addRecord(_timestamp, grid_voltage)
 
-def _parse_data(_dataset):
+        db.commit()
+    except Exception as e:
+        raise
+
+def _parse_data(_data):
+
     _timestamp  = datetime.now()
-    _volt       = _dataset["grid_voltage"]
+    _volt       = _data["grid_voltage"]
 
     _record     = (_timestamp, _volt)
     return _record
@@ -76,9 +93,10 @@ _create_db_table('inverter')
 
 logging.info('Starting worker.')
 
-while True:
+# while True:
+for x in range(2):
     try:
-        _data = get_general_status()["data"]
+        _data = get_general_status()
         _record = _parse_data(_data)
 
         print(_record)
@@ -94,5 +112,7 @@ while True:
         print(_msg)
         logging.info(_msg)
         sys.exit(0)
-    except:
-        logging.exception('Error publishing data')
+    except Exception as e:
+        traceback.print_exc()
+        logging.exception('Fatal Error')
+        sys.exit(1)
